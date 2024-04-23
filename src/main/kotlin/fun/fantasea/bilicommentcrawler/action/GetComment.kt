@@ -9,13 +9,20 @@ import okhttp3.Headers
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Request
 
-class GetComment {
+class GetComment(
+    private val pn: Int,
+    private val ps: Int = 20,
+    private val oid: Long,
+) {
     private val path = "https://api.bilibili.com/x/v2/reply"
-    fun execute(pn: Int): RootResponse {
+    fun execute(): RootResponse {
+        check(pn > 0)
+        check(ps in 1..20)
+
         val url = path.toHttpUrl()
             .newBuilder()
             .addQueryParameter("type", "1")
-            .addQueryParameter("oid", "1900845498") // 弦花 吉他
+            .addQueryParameter("oid", oid.toString())
             .addQueryParameter("sort", "0")
             .addQueryParameter("nohot", "1")
             // 1-base

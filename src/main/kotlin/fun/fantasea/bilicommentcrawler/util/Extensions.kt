@@ -6,3 +6,6 @@ fun <T : CharSequence> T.toJsonString(pretty: Boolean): String = if (pretty) {
 } else {
     om.writeValueAsString(this)
 }
+
+
+fun <T : Any> T?.ifNull(defaultValue: () -> T): T = this ?: defaultValue()

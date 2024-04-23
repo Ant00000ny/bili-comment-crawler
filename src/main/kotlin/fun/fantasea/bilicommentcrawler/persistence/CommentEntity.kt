@@ -1,7 +1,6 @@
 package `fun`.fantasea.bilicommentcrawler.persistence
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import `fun`.fantasea.bilicommentcrawler.model.*
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
@@ -103,36 +102,6 @@ data class CommentEntity(
     @JsonProperty("DisplayRank")
     val displayRank: String?,
     /**
-     * 发送者等级
-     */
-    @JsonProperty("level_info")
-    val levelInfo: LevelInfo,
-    /**
-     * 发送者头像框信息
-     */
-    @JsonProperty("pendant")
-    val pendant: Pendant,
-    /**
-     * 发送者勋章信息
-     */
-    @JsonProperty("nameplate")
-    val nameplate: Nameplate,
-    /**
-     * 发送者认证信息
-     */
-    @JsonProperty("official_verify")
-    val officialVerify: OfficialVerify,
-    /**
-     * 发送者会员信息
-     */
-    @JsonProperty("vip")
-    val vip: Vip,
-    /**
-     * 发送者粉丝标签
-     */
-    @JsonProperty("fans_detail")
-    val fansDetail: FansDetail?,
-    /**
      * 是否关注该用户
      */
     @JsonProperty("following")
@@ -142,11 +111,6 @@ data class CommentEntity(
      */
     @JsonProperty("is_followed")
     val isFollowed: Int,
-    /**
-     * 发送者评论条目装扮信息
-     */
-    @JsonProperty("user_sailing")
-    val userSailing: UserSailing?,
     /**
      * 是否为合作用户？
      */
