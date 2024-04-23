@@ -18,9 +18,6 @@ class OnePageTask(
             oid = 1900845498
         ).execute()
 
-
-        log.info("saving comments of page ${resp.data?.page?.num}(${resp.data?.page?.num?.times(ps)}), total ${resp.data?.page?.count}")
-
         val comments = resp.data
             .ifNull { throw RuntimeException("failed to get comment on page $pn") }
             .replies
@@ -30,7 +27,7 @@ class OnePageTask(
             return emptyList()
         }
 
-        return comments
+        val rootComments = comments
             .map { comment ->
                 CommentEntity(
                     rpid = comment.rpid,
@@ -49,8 +46,6 @@ class OnePageTask(
                     sex = comment.member.sex,
                     sign = comment.member.sign,
                     avatar = comment.member.avatar,
-                    rank = comment.member.rank,
-                    displayRank = comment.member.displayRank,
                     following = comment.member.following,
                     isFollowed = comment.member.isFollowed,
                     isContractor = comment.member.isContractor,
@@ -60,5 +55,38 @@ class OnePageTask(
                     device = comment.content.device,
                 )
             }
+        log.info("got ${rootComments.size} root comments")
+
+        val innerReplies = comments
+            .flatMap { it.replies.ifNull { emptyList() } }
+            .map { comment ->
+                CommentEntity(
+                    rpid = comment.rpid,
+                    oid = comment.oid,
+                    mid = comment.mid,
+                    root = comment.root,
+                    parent = comment.parent,
+                    dialog = comment.dialog,
+                    count = comment.count,
+                    rcount = comment.rcount,
+                    floor = comment.floor,
+                    fansGrade = comment.fansGrade,
+                    cTime = comment.cTime,
+                    like = comment.like,
+                    uname = comment.member.uname,
+                    sex = comment.member.sex,
+                    sign = comment.member.sign,
+                    avatar = comment.member.avatar,
+                    following = comment.member.following,
+                    isFollowed = comment.member.isFollowed,
+                    isContractor = comment.member.isContractor,
+                    contractDesc = comment.member.contractDesc,
+                    message = comment.content.message,
+                    plat = comment.content.plat,
+                    device = comment.content.device,
+                )
+            }
+        log.info("got ${innerReplies.size} inner replies")
+        return rootComments + innerReplies
     }
 }

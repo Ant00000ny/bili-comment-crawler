@@ -9,5 +9,4 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./db/mysql:/var/lib/mysql
-      - ./db/logs:/var/log/mysql
+      - ./db/data:/bitnami/mysql/data

@@ -544,7 +544,7 @@ data class Member(
      * 合作用户说明？
      */
     @JsonProperty("contract_desc")
-    val contractDesc: String,
+    val contractDesc: String?,
 )
 
 /**
@@ -756,7 +756,7 @@ data class FansDetail(
      * 用户 mid
      */
     @JsonProperty("uid")
-    val uid: Int,
+    val uid: Long,
     /**
      * 粉丝标签 id
      */
