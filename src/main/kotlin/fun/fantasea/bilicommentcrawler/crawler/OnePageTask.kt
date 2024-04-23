@@ -3,20 +3,21 @@ package `fun`.fantasea.bilicommentcrawler.crawler
 import `fun`.fantasea.bilicommentcrawler.action.GetComment
 import `fun`.fantasea.bilicommentcrawler.action.GetSubComment
 import `fun`.fantasea.bilicommentcrawler.persistence.CommentEntity
+import `fun`.fantasea.bilicommentcrawler.util.RateLimiter
 import `fun`.fantasea.bilicommentcrawler.util.ifNull
-import kotlinx.coroutines.delay
 import okhttp3.Headers
 import org.slf4j.LoggerFactory
-import kotlin.time.Duration.Companion.milliseconds
 
 class OnePageTask(
     private val headers: Headers,
     private val pn: Int,
     private val ps: Int = 20,
+    private val rateLimiter: RateLimiter,
 ) {
     private val log = LoggerFactory.getLogger(this.javaClass)
     suspend fun execute(): List<CommentEntity> {
         log.info("getting page $pn")
+        rateLimiter.acquire()
         val resp = GetComment(
             pn = pn,
             ps = ps,
@@ -68,6 +69,7 @@ class OnePageTask(
             .flatMap { comment ->
                 if (comment.replies.isNullOrEmpty()) return@flatMap emptyList<CommentEntity>()
                 // get sub-comment of this comment
+                rateLimiter.acquire()
                 val subResp = GetSubComment(
                     headers = headers,
                     root = comment.rpid,
@@ -75,7 +77,6 @@ class OnePageTask(
                     pn = 1,
                     ps = 20,
                 ).execute()
-                delay((200..800).random().milliseconds)
                 val total = subResp.data
                     ?.page
                     ?.count

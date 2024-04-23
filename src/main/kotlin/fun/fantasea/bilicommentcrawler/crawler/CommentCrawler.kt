@@ -2,18 +2,17 @@ package `fun`.fantasea.bilicommentcrawler.crawler
 
 import `fun`.fantasea.bilicommentcrawler.action.GetComment
 import `fun`.fantasea.bilicommentcrawler.persistence.CommentRepository
+import `fun`.fantasea.bilicommentcrawler.util.RateLimiter
 import `fun`.fantasea.bilicommentcrawler.util.ifNull
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Headers
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 @Component
 class CommentCrawler(
+    private val rateLimiter: RateLimiter,
     private val commentRepository: CommentRepository,
     private val headers: Headers,
 ) {
@@ -36,13 +35,10 @@ class CommentCrawler(
 
         log.info("saving comments of page ${resp.data?.page?.num}, total ${resp.data?.page?.count}")
 
-        delay(0.1.seconds)
-
         // each page
         (1..totalRootCount / ps + 1)
             .forEach { pn ->
-                delay((200 ..800).random().milliseconds)
-                val comments = OnePageTask(pn = pn, ps = ps, headers = headers).execute()
+                val comments = OnePageTask(pn = pn, ps = ps, headers = headers, rateLimiter = rateLimiter).execute()
                 launch {
                     commentRepository.saveAll(comments)
                     log.info("saved ${comments.size} comments of page $pn, total saved ${commentRepository.count()}")

@@ -1,9 +1,12 @@
 package `fun`.fantasea.bilicommentcrawler.config
 
 import com.mikaa404.browser.ChromeBrowser
+import `fun`.fantasea.bilicommentcrawler.util.RateLimiter
 import okhttp3.Headers
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.toJavaDuration
 
 @Configuration
 class AppConfig {
@@ -21,5 +24,10 @@ class AppConfig {
 
                 add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
             }.build()
+    }
+
+    @Bean
+    fun rateLimiter(): RateLimiter {
+        return RateLimiter(800.milliseconds.toJavaDuration())
     }
 }
