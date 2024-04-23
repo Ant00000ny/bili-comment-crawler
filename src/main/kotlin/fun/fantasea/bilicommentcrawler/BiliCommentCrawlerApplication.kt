@@ -1,4 +1,4 @@
-package fun.fantasea.bilicommentcrawler
+package `fun`.fantasea.bilicommentcrawler
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
