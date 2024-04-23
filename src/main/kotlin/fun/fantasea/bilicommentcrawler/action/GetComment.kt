@@ -4,9 +4,12 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import `fun`.fantasea.bilicommentcrawler.model.RootResponse
 import `fun`.fantasea.bilicommentcrawler.util.client
 import `fun`.fantasea.bilicommentcrawler.util.om
+import kotlinx.coroutines.delay
 import okhttp3.Headers
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Request
+import org.slf4j.LoggerFactory
+import kotlin.time.Duration.Companion.seconds
 
 class GetComment(
     private val headers: Headers,
@@ -15,7 +18,9 @@ class GetComment(
     private val ps: Int = 20,
 ) {
     private val path = "https://api.bilibili.com/x/v2/reply"
-    fun execute(): RootResponse {
+    private val log = LoggerFactory.getLogger(this.javaClass)
+
+    suspend fun execute(): RootResponse {
         check(pn > 0)
         check(ps in 1..20)
 
@@ -43,5 +48,12 @@ class GetComment(
 
         return respJson
             .let { om.readValue<RootResponse>(it) }
+            .also {
+                if (it.code == -412) {
+                    log.info("-412 error: ${it.message}, retrying after 60 secs...")
+                    delay(60.seconds)
+                    return this.execute()
+                }
+            }
     }
 }
