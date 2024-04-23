@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: bili-comment-crawler
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://db:3306/db?useSSL=false&serverTimezone=UTC
+    username: root
+    password: thisisweakbutidontmind
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect

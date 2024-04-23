@@ -1,0 +1,13 @@
+services:
+  db:
+    image: bitnami/mysql:latest
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: thisisweakbutidontmind
+      MYSQL_DATABASE: db
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/mysql:/var/lib/mysql
+      - ./db/logs:/var/log/mysql
