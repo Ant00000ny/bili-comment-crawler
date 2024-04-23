@@ -26,7 +26,7 @@ class OnePageTask(
         ).execute()
 
         val comments = resp.data
-            .ifNull { throw RuntimeException("failed to get comment on page $pn") }
+            .ifNull { throw RuntimeException("failed to get comment on page $pn: $resp") }
             .replies
 
         if (comments.isNullOrEmpty()) {
