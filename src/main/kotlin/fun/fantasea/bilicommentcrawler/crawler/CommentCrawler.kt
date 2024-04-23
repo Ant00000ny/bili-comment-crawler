@@ -6,9 +6,8 @@ import `fun`.fantasea.bilicommentcrawler.util.ifNull
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import okhttp3.Headers
 import org.slf4j.LoggerFactory
-import org.springframework.boot.ApplicationArguments
-import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -16,16 +15,18 @@ import kotlin.time.Duration.Companion.seconds
 @Component
 class CommentCrawler(
     private val commentRepository: CommentRepository,
-) : ApplicationRunner {
+    private val headers: Headers,
+) {
     private val log = LoggerFactory.getLogger(this.javaClass)
     private val ps = 20
 
-    override fun run(args: ApplicationArguments?) = runBlocking {
+    fun execute(oid: Long) = runBlocking {
         // total num of root comments
         val resp = GetComment(
             pn = 1,
             ps = ps,
-            oid = 1900845498
+            oid = oid,
+            headers = headers
         ).execute()
 
         val totalRootCount = resp.data
@@ -38,11 +39,10 @@ class CommentCrawler(
         delay(0.1.seconds)
 
         // each page
-        // todo wrong count
         (1..totalRootCount / ps + 1)
             .forEach { pn ->
-                delay((200 ..500).random().milliseconds)
-                val comments = OnePageTask(pn = pn, ps = ps).execute()
+                delay((200 ..800).random().milliseconds)
+                val comments = OnePageTask(pn = pn, ps = ps, headers = headers).execute()
                 launch {
                     commentRepository.saveAll(comments)
                     log.info("saved ${comments.size} comments of page $pn, total saved ${commentRepository.count()}")

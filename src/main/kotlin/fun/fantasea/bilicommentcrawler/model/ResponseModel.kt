@@ -91,12 +91,12 @@ data class Data(
      * 评论区支持的类型id
      */
     @JsonProperty("support_mode")
-    val supportMode: List<Int>,
+    val supportMode: List<Int>?,
     /**
      * 折叠相关信息
      */
     @JsonProperty("folder")
-    val folder: Folder,
+    val folder: Folder?,
     /**
      * (?)
      */

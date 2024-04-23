@@ -8,26 +8,23 @@ import okhttp3.Headers
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Request
 
-class GetComment(
+class GetSubComment(
     private val headers: Headers,
-    private val pn: Int,
+    private val root: Long,
     private val oid: Long,
+    private val pn: Int,
     private val ps: Int = 20,
 ) {
-    private val path = "https://api.bilibili.com/x/v2/reply"
+    private val path = "https://api.bilibili.com/x/v2/reply/reply"
     fun execute(): RootResponse {
-        check(pn > 0)
-        check(ps in 1..20)
-
         val url = path.toHttpUrl()
             .newBuilder()
             .addQueryParameter("type", "1")
             .addQueryParameter("oid", oid.toString())
-            .addQueryParameter("sort", "0")
-            .addQueryParameter("nohot", "1")
+            .addQueryParameter("root", root.toString())
+            .addQueryParameter("ps", "20")
             // 1-base
             .addQueryParameter("pn", pn.toString())
-            .addQueryParameter("ps", "20")
             .build()
 
         val request = Request.Builder()
